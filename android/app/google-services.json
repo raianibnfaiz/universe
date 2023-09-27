@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "241021971924",
+    "project_id": "universe-e48a9",
+    "storage_bucket": "universe-e48a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241021971924:android:7cf97f582098d6db413a41",
+        "android_client_info": {
+          "package_name": "com.raian.universe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241021971924-gm6do2r43vgpjl626sn3c7sm2pceob5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.raian.universe",
+            "certificate_hash": "e45f115d64d5c8fd074d3cf1e63dde7315e80b2b"
+          }
+        },
+        {
+          "client_id": "241021971924-e7qsdkoqvcmenppck5nt1utunagqvfca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZMfIOxHdfaDGNgRvJyITEbTB4OrC0eJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241021971924-e7qsdkoqvcmenppck5nt1utunagqvfca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
