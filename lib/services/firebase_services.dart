@@ -12,9 +12,20 @@ class FirebaseServices{
       if(googleSignInAccount != null){
         final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount
             .authentication;
-      } return;
-    } catch (e) {
-      print("Error");
+        final AuthCredential credential = GoogleAuthProvider.credential(
+            idToken: googleSignInAuthentication.idToken,
+            accessToken: googleSignInAuthentication.accessToken);
+        await _auth.signInWithCredential(credential);
+      }
+    } on FirebaseAuthException catch (e) {
+
+      print(e.message);
+      throw e;
     }
+  }
+
+  signout() async{
+    await _auth.signOut();
+    await _googleSignIn.signOut();
   }
 }

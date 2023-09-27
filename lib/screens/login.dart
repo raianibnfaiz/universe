@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:universe/screens/home.dart';
+import 'package:universe/services/firebase_services.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -19,7 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: Center(
           child: FloatingActionButton.extended(
-            onPressed: () {
+            onPressed: () async {
+              await FirebaseServices().signInWithGoogle();
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => HomeScreen()));
             },

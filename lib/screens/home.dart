@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:universe/screens/login.dart';
+import 'package:universe/services/firebase_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async{
+            FirebaseServices().signout();
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()));
           },
