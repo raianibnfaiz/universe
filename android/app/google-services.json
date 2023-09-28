@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "241021971924-gm6do2r43vgpjl626sn3c7sm2pceob5n.apps.googleusercontent.com",
+          "client_id": "241021971924-v5iriqcsf1vqchdcba8vm77cuefeo8mb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.raian.universe",
-            "certificate_hash": "e45f115d64d5c8fd074d3cf1e63dde7315e80b2b"
+            "certificate_hash": "1a4c24c1fc459a9fd18ba3893aabf8369806b07b"
           }
         },
         {
@@ -37,6 +37,13 @@
             {
               "client_id": "241021971924-e7qsdkoqvcmenppck5nt1utunagqvfca.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "241021971924-3ttunvqcmokajg05eek6phnev0nevksh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.raian.universe"
+              }
             }
           ]
         }
