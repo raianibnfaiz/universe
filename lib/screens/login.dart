@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:universe/screens/home.dart';
 import 'package:universe/services/firebase_services.dart';
 
+import 'TabsScreen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () async {
               await FirebaseServices().signInWithGoogle();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()));
+                  MaterialPageRoute(builder: (context) => TabsScreen()));
             },
             icon: const Icon(Icons.login),
             label: Text("Sign In With Google"),

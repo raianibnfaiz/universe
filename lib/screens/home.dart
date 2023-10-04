@@ -1,22 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:universe/screens/login.dart';
 import 'package:universe/services/firebase_services.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:  Text("Home"),
-      ),
       body: Center(
         child: ElevatedButton(
           onPressed: () async{
