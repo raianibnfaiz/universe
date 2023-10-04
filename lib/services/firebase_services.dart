@@ -42,7 +42,7 @@ class FirebaseServices{
   final _auth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn();
 
-  signInWithGoogle() async {
+   signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn
           .signIn();

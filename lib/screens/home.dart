@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:universe/screens/AuthScreen.dart';
 import 'package:universe/screens/login.dart';
 import 'package:universe/services/firebase_services.dart';
 
@@ -18,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () async{
             FirebaseServices().signout();
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()));
+                MaterialPageRoute(builder: (context) => const AuthScreen()));
           },
           child: const Text('Logout'),
         )
