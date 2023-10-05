@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universe/screens/BreakingFeed.dart';
-import 'package:universe/screens/home.dart';
+import 'package:universe/screens/ProfileScreen.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});

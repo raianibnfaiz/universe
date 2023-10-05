@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:universe/widgets/user_image_picker.dart';
 
 import '../services/firebase_services.dart';
 import 'TabsScreen.dart';
@@ -31,23 +36,28 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var enteredEmail = '';
   var enteredPassword = '';
+  File? _selectedImage;
+  final _isAuthenticating = false;
   void _submit() async{
     final isValid = form.currentState!.validate();
     if(isValid){
       form.currentState!.save();
     }
-    if(!isValid){
+    if(!isValid || _selectedImage == null && !_isLogin){
       return;
     }
     if(_isLogin){
       // Log user in
       try{
-        final userCredential = await _auth.signInWithEmailAndPassword(email: enteredEmail, password: enteredPassword);
-        print(userCredential);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => TabsScreen()),
-        );
+        if(_isLogin){
+          final userCredential = await _auth.signInWithEmailAndPassword(email: enteredEmail, password: enteredPassword);
+          print(userCredential);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TabsScreen()),
+          );
+        }
+
       }on FirebaseAuthException catch(error){
         /*if(error.code=='email-already-in-use') {
           print('The account already exists for that email.');
@@ -66,6 +76,19 @@ class _AuthScreenState extends State<AuthScreen> {
       // Sign user up
       try{
         final userCredential = await _auth.createUserWithEmailAndPassword(email: enteredEmail, password: enteredPassword);
+        final storageRef = FirebaseStorage.instance.ref('user_image').child(userCredential.user!.uid + '.jpg');
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'username': 'to be updated',
+          'email': enteredEmail,
+          'image_url': await storageRef.getDownloadURL(),
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TabsScreen()),
+        );
+        print("Image URL $imageUrl");
         print(userCredential);
       }on FirebaseAuthException catch(error){
         /*if(error.code=='email-already-in-use') {
@@ -77,7 +100,6 @@ class _AuthScreenState extends State<AuthScreen> {
             content: Text(error.message ?? 'The account already exists for that email.'),
           ),
         );
-        print('error');
       }
     }
 
@@ -117,6 +139,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ColoredBox(color: Colors.white),
+                        if(!_isLogin)
+                          UserImagePicker(onPickimage: (pickedImage){
+                            _selectedImage = pickedImage;
+                          },),
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Email'),
                           autocorrect: false,

@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:universe/screens/home.dart';
+import 'package:universe/screens/ProfileScreen.dart';
 import 'package:universe/services/firebase_services.dart';
 
 import 'TabsScreen.dart';

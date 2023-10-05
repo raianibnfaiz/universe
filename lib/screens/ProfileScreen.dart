@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:universe/screens/AuthScreen.dart';
-import 'package:universe/screens/login.dart';
 import 'package:universe/services/firebase_services.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Center(
         child: ElevatedButton(
           onPressed: () async{
-            FirebaseServices().signout();
+            FirebaseAuth.instance.signOut();
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const AuthScreen()));
           },
