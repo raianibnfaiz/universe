@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 class PostDisplay extends StatelessWidget {
 
 
-  const PostDisplay({super.key, required this.loadedMessage});
+  const PostDisplay({super.key, required this.loadedMessage, required this.loadedImage , required this.loadedUsername});
   final String? loadedMessage;
+  final String? loadedImage;
+  final String? loadedUsername;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -28,10 +30,30 @@ class PostDisplay extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Post content and writer's writings
-           /* CircleAvatar(
-              radius: 20.0,
-              backgroundImage: AssetImage('assets/images/scoop_insight.jpg'),
-            ),*/
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Post content
+                if(loadedImage != null)
+                  CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage(
+                      loadedImage!,
+                    ),
+                  ),
+
+
+                // Writer's writings
+                Text(
+                  loadedUsername!,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+
 
             SizedBox(height: 8.0),
 

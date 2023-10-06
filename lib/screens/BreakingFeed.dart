@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universe/widgets/news_post.dart';
@@ -30,11 +31,40 @@ class BreakingFeed extends StatelessWidget {
       children:[
         const NewPost(),
         Expanded(
-            child: ListView.builder(
-              itemCount: textItems.length,
-              itemBuilder: (context, index) {
-                return PostDisplay(loadedMessage: textItems[index]);
-              },
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('posts')
+                  .orderBy('createdAt', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                final loadedMessages = snapshot.data?.docs;
+                print("Length-> ${loadedMessages?.length}");
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return const Center(child: CircularProgressIndicator(),);
+                }
+                if(snapshot.hasError){
+                  return Center(
+                    child: Text(
+                      'Something went wrong..',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  );
+                }
+                if(!snapshot.hasData || snapshot.data!.docs.isEmpty){
+                  return Center(
+                    child: Text(
+                      'No post found.',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: loadedMessages?.length,
+                  itemBuilder: (context, index) {
+                    return PostDisplay(loadedMessage: loadedMessages?[index].data()['text'], loadedImage: loadedMessages?[index].data()['userImage'],loadedUsername: loadedMessages?[index].data()['username'],);
+                  },
+                );
+              }
             ),
         )
       ],

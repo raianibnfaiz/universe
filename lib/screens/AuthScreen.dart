@@ -36,6 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var enteredEmail = '';
   var enteredPassword = '';
+  var enteredUsername = '';
   File? _selectedImage;
   final _isAuthenticating = false;
   void _submit() async{
@@ -80,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
         await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-          'username': 'to be updated',
+          'username': enteredUsername,
           'email': enteredEmail,
           'image_url': await storageRef.getDownloadURL(),
         });
@@ -140,9 +141,23 @@ class _AuthScreenState extends State<AuthScreen> {
                       children: [
                         ColoredBox(color: Colors.white),
                         if(!_isLogin)
+
                           UserImagePicker(onPickimage: (pickedImage){
                             _selectedImage = pickedImage;
                           },),
+                        if(!_isLogin)
+                          TextFormField(
+                            decoration: InputDecoration(labelText: 'Username'),
+                            validator: (value) {
+                              if (value!.isEmpty || value.length < 4) {
+                                return 'Username myst be at least 4 characters long.';
+                              }
+                              return null;
+                            },
+                            onSaved: (value){
+                              enteredUsername = value!;
+                            },
+                          ),
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Email'),
                           autocorrect: false,
