@@ -27,18 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if(snapshot.hasData){
-            return const TabsScreen();
-          }
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return const Center(child: SplashSreen() );
-          }
-          return const AuthScreen();
-        }
-      ),
+      home: AuthScreen()
     );
   }
 }

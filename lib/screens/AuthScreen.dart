@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:universe/screens/edit_profile.dart';
 import 'package:universe/widgets/user_image_picker.dart';
 
 import '../services/firebase_services.dart';
@@ -33,7 +34,9 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final form = GlobalKey<FormState>();
+  User? user = _auth.currentUser;
   var _isLogin = true;
+  var _isGoogleSignIn = false;
   var enteredEmail = '';
   var enteredPassword = '';
   var enteredUsername = '';
@@ -103,8 +106,14 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     }
-
-
+    /*if(_isGoogleSignIn){
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+        'username': user?.displayName,
+        'email': user?.email,
+        'image_url': user?.photoURL,
+      });
+    }
+*/
 
 
     print(enteredEmail);
@@ -202,25 +211,27 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           child: Text(_isLogin?'Create new account': "I already have an account"),
                         ),
-                        Card(
-                          child: FloatingActionButton.extended(
-                            onPressed: () async {
-                              await FirebaseServices().signInWithGoogle();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => TabsScreen()),
-                              );
-                            },
-                            icon: Image.asset(
-                              'assets/images/google.png', // Replace with your Google icon image
-                              height: 30, // Adjust height as needed
-                              width: 30, // Adjust width as needed
+                        if(_isLogin)
+                          Card(
+                            child: FloatingActionButton.extended(
+                              onPressed: () async {
+                                  await FirebaseServices().signInWithGoogle();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => TabsScreen()),
+                                );
+                              },
+                              icon: Image.asset(
+                                'assets/images/google.png', // Replace with your Google icon image
+                                height: 30, // Adjust height as needed
+                                width: 30, // Adjust width as needed
+                              ),
+                              label: Text("Sign In With Google"),
+                              foregroundColor: Colors.orangeAccent,
+                              backgroundColor: Colors.white,
                             ),
-                            label: Text("Sign In With Google"),
-                            foregroundColor: Colors.orangeAccent,
-                            backgroundColor: Colors.white,
-                          ),
-                        )
+                          )
                       ],
                     ),
                   ),
