@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:universe/screens/BreakingFeed.dart';
 import 'package:universe/screens/ProfileScreen.dart';
 
+import '../widgets/EditProfile.dart';
+
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
 
@@ -36,6 +38,24 @@ class _TabsScreenState extends State<TabsScreen> {
       });
     }
   }
+  void _openAddExpensesOverlay() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return FractionallySizedBox(
+          heightFactor: 1,
+          child: Container(
+            child: NewExpense(
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+        ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     Widget activePage =  BreakingFeed();
@@ -47,6 +67,12 @@ class _TabsScreenState extends State<TabsScreen> {
     return Scaffold(
       appBar: AppBar(
         title:  Text(activeTitle),
+        actions: (_selectedPageIndex == 1)?[
+        IconButton(
+            icon: const Icon(Icons.mode_edit_outline_rounded),
+            onPressed: _openAddExpensesOverlay,
+          )
+        ]:[],
       ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(

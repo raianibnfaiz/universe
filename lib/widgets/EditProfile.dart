@@ -1,18 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:universe/models/City.dart';
-import 'package:universe/models/State.dart';
-import 'package:universe/screens/AuthScreen.dart';
-import 'package:universe/services/firebase_services.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+import '../models/City.dart';
+import '../models/State.dart';
 
+class NewExpense extends StatefulWidget {
+  const NewExpense({super.key,required this.onClose});
+  final VoidCallback onClose;
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<NewExpense> createState() => _NewExpenseState();
 }
-class _ProfileScreenState extends State<ProfileScreen> {
+
+class _NewExpenseState extends State<NewExpense> {
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
   final _auth = FirebaseAuth.instance;
 
   String? _userName;
@@ -50,11 +58,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
-          body: Center(
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          SizedBox(height: 40),
+           // Adjust the width as needed
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            children: [
+
+              IconButton(
+                onPressed: widget.onClose,
+                icon: Icon(Icons.close),
+              ),
+              Text(
+                'Edit Profile',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 40), // Adjust the width as needed
+            ],
+          ),
+          Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -140,15 +172,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
                   ElevatedButton(
-                    onPressed: () async {
-                      await FirebaseServices().signout();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AuthScreen()),
-                      );
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red, // Background color
+                      primary: Colors.deepOrangeAccent, // Background color
                       onPrimary: Colors.white, // Text color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0), // Rounded corners
@@ -163,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         constraints: const BoxConstraints(minWidth: 150.0, minHeight: 50.0),
                         alignment: Alignment.center,
                         child: const Text(
-                          'Logout',
+                          'Update',
                           style: TextStyle(fontSize: 18.0),
                         ),
                       ),
@@ -173,29 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-        ),
-        onWillPop: ()=>_onBackPressed(context));
-  }
-  _onBackPressed(BuildContext context) async{
-    bool? exitApp = await showDialog(
-        context: context,
-        builder: (BuildContext context){
-          return AlertDialog(
-            title: Text("Do you want to exit the app?"),
-            actions: [
-              TextButton(
-                  child: Text("No"),
-                  onPressed: ()=>Navigator.of(context).pop(false)),
-              TextButton(
-                child: Text("Yes"),
-                onPressed: () {
-                  // Exit the app
-                  SystemNavigator.pop();
-                },
-              ),
-            ],
-          );
-        });
-    return exitApp ?? false;
+        ],
+      ),
+    );
   }
 }
