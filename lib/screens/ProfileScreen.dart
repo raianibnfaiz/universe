@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,19 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _userName;
   String? _userEmail;
   String? _userPhotoUrl;
-  String? _selectedState;
-  String? _selectedCity;
-  final List<Divisions> states = [
-    Divisions('Dhaka', [Districts('Dhaka'), Districts(' Faridpur'), Districts(' Gazipur'), Districts(' Gopalganj'), Districts(' Jamalpur'), Districts(' Kishoreganj'), Districts(' Madaripur'), Districts(' Manikganj'), Districts(' Munshiganj'), Districts(' Mymensingh'), Districts(' Narayanganj'), Districts(' Narsingdi'), Districts(' Netrakona'), Districts(' Rajbari'), Districts(' Shariatpur'), Districts(' Sherpur'), Districts(' Tangail')]),
-    Divisions('Chattogram', [Districts('Bandarban'), Districts(' Brahmanbaria'), Districts(' Chandpur'), Districts(' Chattogram'), Districts(' Cumilla'), Districts(' Cox’s Bazar'), Districts(' Feni'), Districts(' Khagrachhari'), Districts(' Lakshmipur'), Districts(' Noakhali'), Districts(' Rangamati')]),
-    Divisions('Rajshahi', [Districts('Bogra'), Districts(' Chapainawabganj'), Districts(' Joypurhat'), Districts(' Naogaon'), Districts(' Natore'), Districts(' Pabna'), Districts(' Rajshahi'), Districts(' Sirajganj')]),
-    Divisions('Khulna', [Districts('Bagerhat'), Districts(' Chuadanga'), Districts(' Jashore'), Districts(' Jhenaidah'), Districts(' Khulna'), Districts(' Kushtia'), Districts(' Magura'), Districts(' Meherpur'), Districts(' Narail'), Districts(' Satkhira')]),
-    Divisions('Barishal', [Districts('Barguna'), Districts(' Barishal'), Districts(' Bhola'), Districts(' Jhalokati'), Districts(' Patuakhali'), Districts(' Pirojpur')]),
-    Divisions('Sylhet', [Districts('Habiganj'), Districts(' Moulvibazar'), Districts(' Sunamganj'), Districts(' Sylhet')]),
-    Divisions('Mymensingh', [Districts('Jamalpur'), Districts(' Netrokona'), Districts(' Sherpur'), Districts(' Mymensingh')]),
-    Divisions('Rangpur', [Districts('Dinajpur'), Districts(' Gaibandha'), Districts(' Kurigram'), Districts(' Lalmonirhat'), Districts(' Nilphamari'), Districts(' Panchagarh'), Districts(' Rangpur'), Districts(' Thakurgaon')]),
-    // Add more states and cities as needed
-  ];
+
 
 
   @override
@@ -95,45 +84,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   SizedBox(height: 30),
 
-                  DropdownButton<String>(
-                    value: _selectedState,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedState = newValue;
-                        // Reset the selected city when state changes
-                        _selectedCity = null;
-                      });
-                    },
-                    items: states.map((state) {
-                      return DropdownMenuItem<String>(
-                        value: state.name,
-                        child: Text(state.name),
-                      );
-                    }).toList(),
-                    hint: Text('Select Division'),
-                  ),
+                  Expanded(
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .where('email', isEqualTo: _userEmail)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          final docs = snapshot.data?.docs;
+                          print("Length-> ${docs?.length}");
+                          if(snapshot.connectionState == ConnectionState.waiting){
+                            return const Center(child: CircularProgressIndicator(),);
+                          }
+                          if(snapshot.hasError){
+                            return Center(
+                              child: Text(
+                                'Something went wrong..',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
+                            );
+                          }
+                          if(!snapshot.hasData || snapshot.data!.docs.isEmpty){
+                            return Center(
+                              child: Text(
+                                'No post found.',
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
+                            );
+                          }
+                          final phoneNumber = docs?[0].data()['phone'];
+                          return
+                          phoneNumber != null
+                              ?  Text(
+                            phoneNumber,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                              : SizedBox();
 
-                  SizedBox(height: 20),
-
-                  DropdownButton<String>(
-                    value: _selectedCity,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedCity = newValue;
-                      });
-                    },
-                    items: _selectedState != null
-                        ? states
-                        .firstWhere((state) => state.name == _selectedState)
-                        .cities
-                        .map((city) {
-                      return DropdownMenuItem<String>(
-                        value: city.name,
-                        child: Text(city.name),
-                      );
-                    }).toList()
-                        : [],
-                    hint: Text('Select District'),
+                        }
+                    ),
                   ),
 
                   SizedBox(height: 30),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
+  final _usernameController = TextEditingController();
+  final _userphoneController = TextEditingController();
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   @override
@@ -26,8 +29,8 @@ class _NewExpenseState extends State<NewExpense> {
   String? _userName;
   String? _userEmail;
   String? _userPhotoUrl;
-  String? _selectedState;
-  String? _selectedCity;
+  String? _selectedDivision;
+  String? _selectedDistrict;
   final List<Divisions> states = [
     Divisions('Dhaka', [Districts('Dhaka'), Districts(' Faridpur'), Districts(' Gazipur'), Districts(' Gopalganj'), Districts(' Jamalpur'), Districts(' Kishoreganj'), Districts(' Madaripur'), Districts(' Manikganj'), Districts(' Munshiganj'), Districts(' Mymensingh'), Districts(' Narayanganj'), Districts(' Narsingdi'), Districts(' Netrakona'), Districts(' Rajbari'), Districts(' Shariatpur'), Districts(' Sherpur'), Districts(' Tangail')]),
     Divisions('Chattogram', [Districts('Bandarban'), Districts(' Brahmanbaria'), Districts(' Chandpur'), Districts(' Chattogram'), Districts(' Cumilla'), Districts(' Cox’s Bazar'), Districts(' Feni'), Districts(' Khagrachhari'), Districts(' Lakshmipur'), Districts(' Noakhali'), Districts(' Rangamati')]),
@@ -57,6 +60,25 @@ class _NewExpenseState extends State<NewExpense> {
         _userPhotoUrl = user.photoURL;
       });
     }
+  }
+  Future<void> _editUserInfo() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    String? enteredUsername = _usernameController.text;
+    if(_usernameController.text.isEmpty){
+      enteredUsername = _userName;
+    }
+    final enteredPhone = _userphoneController.text;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+        'username': enteredUsername,
+        'email': user?.email,
+        'image_url': user.photoURL != null? user?.photoURL: 'https://t3.ftcdn.net/jpg/01/18/06/32/360_F_118063283_FD6CvzN1v1LFEMupsqEfuOkPbfjuO0CU.jpg',
+        'phone': enteredPhone,
+        'division': _selectedDivision,
+        'district': _selectedDistrict,
+      });
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -103,37 +125,37 @@ class _NewExpenseState extends State<NewExpense> {
 
                   SizedBox(height: 20),
 
+
                   _userName != null
-                      ? Text(
-                    '$_userName',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                      ?  TextField(
+                    controller: _usernameController,
+                    textCapitalization: TextCapitalization.sentences,
+                    autocorrect: true,
+                    enableSuggestions: true,
+                    decoration: InputDecoration(labelText: _userName),
                   )
                       : SizedBox(), // Hide if username is null
 
                   SizedBox(height: 10),
 
-                  _userEmail != null
-                      ? Text(
-                    '$_userEmail',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
-                  )
-                      : SizedBox(), // Hide if email is null
+                   TextField(
+                    controller: _userphoneController,
+                    textCapitalization: TextCapitalization.sentences,
+                    autocorrect: true,
+                    enableSuggestions: true,
+                    decoration: InputDecoration(labelText: "Phone Number"),
+                  ),
+                      // Hide if email is null
 
                   SizedBox(height: 30),
 
                   DropdownButton<String>(
-                    value: _selectedState,
+                    value: _selectedDivision,
                     onChanged: (newValue) {
                       setState(() {
-                        _selectedState = newValue;
+                        _selectedDivision = newValue;
                         // Reset the selected city when state changes
-                        _selectedCity = null;
+                        _selectedDistrict = null;
                       });
                     },
                     items: states.map((state) {
@@ -148,15 +170,15 @@ class _NewExpenseState extends State<NewExpense> {
                   SizedBox(height: 20),
 
                   DropdownButton<String>(
-                    value: _selectedCity,
+                    value: _selectedDistrict,
                     onChanged: (newValue) {
                       setState(() {
-                        _selectedCity = newValue;
+                        _selectedDistrict = newValue;
                       });
                     },
-                    items: _selectedState != null
+                    items: _selectedDivision != null
                         ? states
-                        .firstWhere((state) => state.name == _selectedState)
+                        .firstWhere((state) => state.name == _selectedDivision)
                         .cities
                         .map((city) {
                       return DropdownMenuItem<String>(
@@ -172,7 +194,7 @@ class _NewExpenseState extends State<NewExpense> {
 
 
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _editUserInfo,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.deepOrangeAccent, // Background color
                       onPrimary: Colors.white, // Text color

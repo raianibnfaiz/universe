@@ -22,6 +22,7 @@ class _TabsScreenState extends State<TabsScreen> {
       _selectedPageIndex = index;
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -29,11 +30,15 @@ class _TabsScreenState extends State<TabsScreen> {
   }
   Future<void> _getUserInfo() async {
     User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
+    final docs = FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: user?.email);
+
+    if (docs == null) {
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
         'username': user?.displayName,
         'email': user?.email,
-        'image_url': user.photoURL != null? user?.photoURL: 'https://t3.ftcdn.net/jpg/01/18/06/32/360_F_118063283_FD6CvzN1v1LFEMupsqEfuOkPbfjuO0CU.jpg'
+        'image_url': user?.photoURL != null? user?.photoURL: 'https://t3.ftcdn.net/jpg/01/18/06/32/360_F_118063283_FD6CvzN1v1LFEMupsqEfuOkPbfjuO0CU.jpg'
 
       });
     }
