@@ -13,14 +13,13 @@ class ProfileScreen extends StatefulWidget {
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
+
 class _ProfileScreenState extends State<ProfileScreen> {
   final _auth = FirebaseAuth.instance;
 
   String? _userName;
   String? _userEmail;
   String? _userPhotoUrl;
-
-
 
   @override
   void initState() {
@@ -39,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -53,33 +53,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _userPhotoUrl != null
                       ? CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(_userPhotoUrl!),
-                  )
+                          radius: 50,
+                          backgroundImage: NetworkImage(_userPhotoUrl!),
+                        )
                       : SizedBox(), // Hide if photo URL is null
 
                   SizedBox(height: 20),
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .where('email', isEqualTo: _userEmail)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        final docs = snapshot.data?.docs;
+                        print("Length-> ${docs?.length}");
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Something went wrong..',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          );
+                        }
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No post found.',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          );
+                        }
+                        final username = docs?[0].data()['username'];
+                        return username != null
+                            ? Text(
+                                username,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : SizedBox();
+                      }),
 
-                  _userName != null
-                      ? Text(
-                    '$_userName',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                      : SizedBox(), // Hide if username is null
+                  // Hide if username is null
 
                   SizedBox(height: 10),
 
                   _userEmail != null
                       ? Text(
-                    '$_userEmail',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
-                  )
+                          '$_userEmail',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        )
                       : SizedBox(), // Hide if email is null
 
                   SizedBox(height: 30),
@@ -93,10 +126,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         builder: (context, snapshot) {
                           final docs = snapshot.data?.docs;
                           print("Length-> ${docs?.length}");
-                          if(snapshot.connectionState == ConnectionState.waiting){
-                            return const Center(child: CircularProgressIndicator(),);
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          if(snapshot.hasError){
+                          if (snapshot.hasError) {
                             return Center(
                               child: Text(
                                 'Something went wrong..',
@@ -104,7 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           }
-                          if(!snapshot.hasData || snapshot.data!.docs.isEmpty){
+                          if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
                             return Center(
                               child: Text(
                                 'No post found.',
@@ -113,46 +150,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           }
                           final phoneNumber = docs?[0].data()['phone'];
-                          return
-                          phoneNumber != null
-                              ?  Text(
-                            phoneNumber,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                              : SizedBox();
+                          final division = docs?[0].data()['division'];
+                          final district = docs?[0].data()['district'];
+                          print(phoneNumber);
+                          return Center(
+                            child: Column(
+                              children: [
+                            phoneNumber.isNotEmpty
+                            ? Text(
+                            "Phone : $phoneNumber",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            )
+                                : SizedBox(),
 
-                        }
-                    ),
+                                SizedBox(height: 30),
+
+                                division != null
+                            ? Text(
+                            "Division : $division",
+                            style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Roboto',
+                            color: Colors.blueGrey,
+                            ),
+                            )
+                                : SizedBox(),
+
+                                SizedBox(height: 30),
+
+                                district != null
+                            ? Text(
+                            "District : $district",
+                            style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.teal,
+                            ),
+                            )
+                                : SizedBox(),
+                              ],
+                            ),
+                          );
+
+
+
+                        }),
+
+
                   ),
 
                   SizedBox(height: 30),
-
 
                   ElevatedButton(
                     onPressed: () async {
                       await FirebaseServices().signout();
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AuthScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const AuthScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Colors.red, // Background color
                       onPrimary: Colors.white, // Text color
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(30.0), // Rounded corners
                       ),
                       elevation: 3, // Elevation to create a shadow effect
                     ),
                     child: Ink(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0), // Rounded corners for ink splash
+                        borderRadius: BorderRadius.circular(
+                            30.0), // Rounded corners for ink splash
                       ),
                       child: Container(
-                        constraints: const BoxConstraints(minWidth: 150.0, minHeight: 50.0),
+                        constraints: const BoxConstraints(
+                            minWidth: 150.0, minHeight: 50.0),
                         alignment: Alignment.center,
                         child: const Text(
                           'Logout',
@@ -166,18 +242,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        onWillPop: ()=>_onBackPressed(context));
+        onWillPop: () => _onBackPressed(context));
   }
-  _onBackPressed(BuildContext context) async{
+
+  _onBackPressed(BuildContext context) async {
     bool? exitApp = await showDialog(
         context: context,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Do you want to exit the app?"),
             actions: [
               TextButton(
                   child: Text("No"),
-                  onPressed: ()=>Navigator.of(context).pop(false)),
+                  onPressed: () => Navigator.of(context).pop(false)),
               TextButton(
                 child: Text("Yes"),
                 onPressed: () {

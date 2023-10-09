@@ -22,10 +22,12 @@ class _NewExpenseState extends State<NewExpense> {
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
+    _usernameController.removeListener(_checkTextField);
+    _usernameController.dispose();
     super.dispose();
   }
   final _auth = FirebaseAuth.instance;
-
+  bool isButtonEnabled = false;
   String? _userName;
   String? _userEmail;
   String? _userPhotoUrl;
@@ -48,11 +50,17 @@ class _NewExpenseState extends State<NewExpense> {
   void initState() {
     super.initState();
     _getUserInfo();
+    _usernameController.addListener(_checkTextField);
+    _userphoneController.addListener(_checkTextField);
     print("photo URL $_userPhotoUrl");
   }
 
   Future<void> _getUserInfo() async {
     User? user = _auth.currentUser;
+    if(_usernameController.text.isNotEmpty ){
+      isButtonEnabled = true;
+    }
+    print(_usernameController.text);
     if (user != null) {
       setState(() {
         _userName = user.displayName;
@@ -61,13 +69,27 @@ class _NewExpenseState extends State<NewExpense> {
       });
     }
   }
+  void _checkTextField() {
+    setState(() {
+      isButtonEnabled = _usernameController.text.isNotEmpty &&
+          _userphoneController.text.isNotEmpty;
+    });
+  }
+
   Future<void> _editUserInfo() async {
     User? user = FirebaseAuth.instance.currentUser;
     String? enteredUsername = _usernameController.text;
     if(_usernameController.text.isEmpty){
       enteredUsername = _userName;
     }
-    final enteredPhone = _userphoneController.text;
+
+    if(_usernameController.text.isEmpty){
+      enteredUsername = _userName;
+    }
+    if(_usernameController.text.isEmpty){
+      enteredUsername = _userName;
+    }
+    String enteredPhone = _userphoneController.text;
     if (user != null) {
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
         'username': enteredUsername,
@@ -132,7 +154,8 @@ class _NewExpenseState extends State<NewExpense> {
                     textCapitalization: TextCapitalization.sentences,
                     autocorrect: true,
                     enableSuggestions: true,
-                    decoration: InputDecoration(labelText: _userName),
+                    autofillHints: [AutofillHints.username],
+                    decoration: InputDecoration(labelText: "Username"),
                   )
                       : SizedBox(), // Hide if username is null
 
@@ -194,7 +217,8 @@ class _NewExpenseState extends State<NewExpense> {
 
 
                   ElevatedButton(
-                    onPressed: _editUserInfo,
+
+                    onPressed: isButtonEnabled ? _editUserInfo: null,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.deepOrangeAccent, // Background color
                       onPrimary: Colors.white, // Text color
