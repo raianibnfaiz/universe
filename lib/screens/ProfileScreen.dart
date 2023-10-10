@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       )
                                     : SizedBox(),
                                 SizedBox(height: 30),
-                                division != null || division != 'Select Division'
+                                division != null
                                     ? Text(
                                         "Division : $division",
                                         style: TextStyle(
@@ -191,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       )
                                     : SizedBox(),
                                 SizedBox(height: 30),
-                                district != null || district != 'Select District'
+                                district != null
                                     ? Text(
                                         "District : $district",
                                         style: TextStyle(

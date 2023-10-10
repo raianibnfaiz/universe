@@ -87,6 +87,9 @@ class _AuthScreenState extends State<AuthScreen> {
           'username': enteredUsername,
           'email': enteredEmail,
           'image_url': await storageRef.getDownloadURL(),
+          'phone': '',
+          'division': null,
+          'district': null,
         });
         Navigator.push(
           context,

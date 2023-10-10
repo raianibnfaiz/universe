@@ -50,8 +50,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
       setState(() {
         _usernameController.text = userSnapshot['username'];
         _phoneNumberController.text = userSnapshot['phone'];
-        _selectedDivision = userSnapshot['division'] ;
-        _selectedDistrict = userSnapshot['district'];
+        _selectedDivision = userSnapshot['division'] ?? 'Select Division';
+        _selectedDistrict = userSnapshot['district']?? 'Select District';
       });
     }
   }

@@ -39,7 +39,10 @@ class _TabsScreenState extends State<TabsScreen> {
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
         'username': user?.displayName,
         'email': user?.email,
-        'image_url': user?.photoURL != null? user?.photoURL: 'https://t3.ftcdn.net/jpg/01/18/06/32/360_F_118063283_FD6CvzN1v1LFEMupsqEfuOkPbfjuO0CU.jpg'
+        'image_url': user?.photoURL != null? user?.photoURL: 'https://t3.ftcdn.net/jpg/01/18/06/32/360_F_118063283_FD6CvzN1v1LFEMupsqEfuOkPbfjuO0CU.jpg',
+        'phone': '',
+        'division': null,
+        'district': null,
 
       });
     }
