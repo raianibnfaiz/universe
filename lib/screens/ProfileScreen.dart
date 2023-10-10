@@ -16,9 +16,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _auth = FirebaseAuth.instance;
-
-  String? _userName;
   String? _userEmail;
+  String? _username;
   String? _userPhotoUrl;
 
   @override
@@ -32,9 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     User? user = _auth.currentUser;
     if (user != null) {
       setState(() {
-        _userName = user.displayName;
+        _username = user.displayName;
         _userEmail = user.email;
-        _userPhotoUrl = user.photoURL;
       });
     }
   }
@@ -50,13 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 20),
-
-                  _userPhotoUrl != null
-                      ? CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(_userPhotoUrl!),
-                        )
-                      : SizedBox(), // Hide if photo URL is null
+                  // Hide if photo URL is null
 
                   SizedBox(height: 20),
                   StreamBuilder(
@@ -90,15 +82,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         }
                         final username = docs?[0].data()['username'];
-                        return username != null
-                            ? Text(
-                                username,
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : SizedBox();
+                        final userPhotoUrl = docs?[0].data()['image_url'];
+                        return Column(
+                          children: [
+                            _userPhotoUrl != null
+                                ? CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage:
+                                        NetworkImage(_userPhotoUrl!),
+                                  )
+                                : CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(userPhotoUrl),
+                                  ),
+                            SizedBox(height: 10),
+                            username != null
+                                ? Text(
+                                    username,
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : Text(
+                                    _username!,
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ],
+                        );
                       }),
 
                   // Hide if username is null
@@ -156,49 +170,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           return Center(
                             child: Column(
                               children: [
-                            phoneNumber.isNotEmpty
-                            ? Text(
-                            "Phone : $phoneNumber",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            )
-                                : SizedBox(),
-
+                                phoneNumber.isNotEmpty
+                                    ? Text(
+                                        "Phone : $phoneNumber",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : SizedBox(),
                                 SizedBox(height: 30),
-
-                                division != null
-                            ? Text(
-                            "Division : $division",
-                            style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Roboto',
-                            color: Colors.blueGrey,
-                            ),
-                            )
-                                : SizedBox(),
-
+                                division != null || division != 'Select Division'
+                                    ? Text(
+                                        "Division : $division",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontFamily: 'Roboto',
+                                          color: Colors.blueGrey,
+                                        ),
+                                      )
+                                    : SizedBox(),
                                 SizedBox(height: 30),
-
-                                district != null
-                            ? Text(
-                            "District : $district",
-                            style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.teal,
-                            ),
-                            )
-                                : SizedBox(),
+                                district != null || district != 'Select District'
+                                    ? Text(
+                                        "District : $district",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.teal,
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           );
-
-
-
                         }),
-
-
                   ),
 
                   SizedBox(height: 30),

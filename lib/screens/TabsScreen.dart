@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universe/screens/BreakingFeed.dart';
 import 'package:universe/screens/ProfileScreen.dart';
+import 'package:universe/widgets/update_profile.dart';
 
 import '../widgets/EditProfile.dart';
 
@@ -33,8 +34,8 @@ class _TabsScreenState extends State<TabsScreen> {
     final docs = FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: user?.email);
-
-    if (docs == null) {
+    final userDoc = await docs.get();
+    if(userDoc.docs.length == 0) {
       await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
         'username': user?.displayName,
         'email': user?.email,
@@ -51,7 +52,7 @@ class _TabsScreenState extends State<TabsScreen> {
         return FractionallySizedBox(
           heightFactor: 1,
           child: Container(
-            child: NewExpense(
+            child: UpdateProfile(
               onClose: () {
                 Navigator.of(context).pop();
               },
