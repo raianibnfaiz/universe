@@ -7,6 +7,7 @@ import 'package:universe/screens/ProfileScreen.dart';
 import 'package:universe/widgets/update_profile.dart';
 
 import '../widgets/EditProfile.dart';
+import '../widgets/main_drawer.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -47,6 +48,14 @@ class _TabsScreenState extends State<TabsScreen> {
       });
     }
   }
+  void _setScreen(String identifier) {
+    if(identifier == "filters"){
+
+    }
+    else{
+      Navigator.of(context).pop();
+    }
+  }
   void _openAddExpensesOverlay() {
     showModalBottomSheet(
       context: context,
@@ -83,6 +92,7 @@ class _TabsScreenState extends State<TabsScreen> {
           )
         ]:[],
       ),
+      drawer:  MainDrawer(onSelectScreen: _setScreen),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: selectPage,

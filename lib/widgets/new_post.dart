@@ -27,8 +27,9 @@ class _NewPostState extends State<NewPost> {
     _postController.clear();
     final user = FirebaseAuth.instance.currentUser;
     final userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-
+    String postId = FirebaseFirestore.instance.collection('posts').doc().id;
     FirebaseFirestore.instance.collection('posts').add({
+      'postId': postId,
       'text': enteredPost,
       'createdAt': Timestamp.now(),
       'userId': user.uid,

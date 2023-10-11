@@ -47,7 +47,7 @@ class BreakingFeed extends StatelessWidget {
                     return ListView.builder(
                       itemCount: loadedMessages?.length,
                       itemBuilder: (context, index) {
-                        return PostDisplay(loadedMessage: loadedMessages?[index].data()['text'], loadedImage: loadedMessages?[index].data()['userImage'],loadedUsername: loadedMessages?[index].data()['username'],);
+                        return PostDisplay(loadedMessage: loadedMessages?[index].data()['text'], loadedImage: loadedMessages?[index].data()['userImage'],loadedUsername: loadedMessages?[index].data()['username'],loadedPostId: loadedMessages?[index].data()['postId'],);
                       },
                     );
                   }
