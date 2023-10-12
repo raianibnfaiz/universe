@@ -29,15 +29,15 @@ class MainDrawer extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  Icons.fastfood,
+                  Icons.newspaper_sharp,
                   size: 48,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(width: 18),
                 Text(
-                  'Cooking Up!',
+                  'Scoop Insight!',
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ],
@@ -45,12 +45,12 @@ class MainDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.feed_rounded,
+              Icons.home_sharp,
               size: 26,
               color: Theme.of(context).colorScheme.onBackground,
             ),
             title: Text(
-              'Meals',
+              'Home',
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: Theme.of(context).colorScheme.onBackground,
                 fontSize: 24,

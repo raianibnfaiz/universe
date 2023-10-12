@@ -80,11 +80,11 @@ class PostDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueGrey, width: 3.0),
+          border: Border.all(color: Colors.blueGrey, width: 0.5,style: BorderStyle.solid),
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
@@ -190,6 +190,7 @@ class PostDisplay extends StatelessWidget {
                 ),
 
                 SizedBox(height: 8.0),
+
                 LoadComments(loadedPostId: loadedPostId)
               ],
             ),

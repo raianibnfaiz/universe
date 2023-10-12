@@ -12,33 +12,9 @@ class LoadComments extends StatefulWidget {
 }
 
 class _LoadCommentsState extends State<LoadComments> {
-  @override
-  void initState() {
-    super.initState();
-    _commentsFuture = _fetchedComments();
-  }
 
-  Future<List<dynamic>>? _commentsFuture;
-  Future<List<dynamic>> _fetchedComments() async {
-    final docs = FirebaseFirestore.instance.collection('posts').where(
-          'postId',
-          isEqualTo: widget.loadedPostId,
-        );
-    QuerySnapshot userQuerySnapshot = await docs.get();
-    if (userQuerySnapshot.docs.isNotEmpty) {
-      Map<String, dynamic> userData =
-          userQuerySnapshot.docs[0].data() as Map<String, dynamic>;
 
-      // Accessing properties of the user document
-      List<dynamic> userComment = userData['comment'];
-      List<dynamic> uC = List.from(userComment);
-      print("comment: $userComment, ${uC.length}, ${uC[0]['comment']}");
-      return uC;
-    }
-    else{
-      return [];
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +71,11 @@ class _LoadCommentsState extends State<LoadComments> {
                 username,
                 style: TextStyle(color: Colors.blue, fontSize: 14),
               ),
+
             );
+
           },
+
         );
 
       },
