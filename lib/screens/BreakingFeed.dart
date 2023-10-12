@@ -11,10 +11,9 @@ class BreakingFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return  WillPopScope(
+    return WillPopScope(
         child: Column(
-          children:[
+          children: [
             const NewPost(),
             Expanded(
               child: StreamBuilder(
@@ -25,10 +24,12 @@ class BreakingFeed extends StatelessWidget {
                   builder: (context, snapshot) {
                     final loadedMessages = snapshot.data?.docs;
                     print("Length-> ${loadedMessages?.length}");
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Center(child: CircularProgressIndicator(),);
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
-                    if(snapshot.hasError){
+                    if (snapshot.hasError) {
                       return Center(
                         child: Text(
                           'Something went wrong..',
@@ -36,7 +37,7 @@ class BreakingFeed extends StatelessWidget {
                         ),
                       );
                     }
-                    if(!snapshot.hasData || snapshot.data!.docs.isEmpty){
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Center(
                         child: Text(
                           'No post found.',
@@ -47,26 +48,35 @@ class BreakingFeed extends StatelessWidget {
                     return ListView.builder(
                       itemCount: loadedMessages?.length,
                       itemBuilder: (context, index) {
-                        return PostDisplay(loadedMessage: loadedMessages?[index].data()['text'], loadedImage: loadedMessages?[index].data()['userImage'],loadedUsername: loadedMessages?[index].data()['username'],loadedPostId: loadedMessages?[index].data()['postId'],);
+                        TextEditingController commentController = TextEditingController();
+                        return PostDisplay(
+                          loadedMessage: loadedMessages?[index].data()['text'],
+                          loadedImage:
+                              loadedMessages?[index].data()['userImage'],
+                          loadedUsername:
+                              loadedMessages?[index].data()['username'],
+                          loadedPostId: loadedMessages?[index].data()['postId'],
+                          commentController: commentController,
+                        );
                       },
                     );
-                  }
-              ),
+                  }),
             )
           ],
         ),
-        onWillPop: ()=>_onBackPressed(context));
+        onWillPop: () => _onBackPressed(context));
   }
-  _onBackPressed(BuildContext context) async{
+
+  _onBackPressed(BuildContext context) async {
     bool? exitApp = await showDialog(
         context: context,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Do you want to exit the app?"),
             actions: [
               TextButton(
                   child: Text("No"),
-                  onPressed: ()=>Navigator.of(context).pop(false)),
+                  onPressed: () => Navigator.of(context).pop(false)),
               TextButton(
                 child: Text("Yes"),
                 onPressed: () {

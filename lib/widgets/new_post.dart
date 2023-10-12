@@ -28,13 +28,14 @@ class _NewPostState extends State<NewPost> {
     final user = FirebaseAuth.instance.currentUser;
     final userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
     String postId = FirebaseFirestore.instance.collection('posts').doc().id;
-    FirebaseFirestore.instance.collection('posts').add({
+    FirebaseFirestore.instance.collection('posts').doc(postId).set({
       'postId': postId,
       'text': enteredPost,
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData.data()!['username'],
       'userImage': userData.data()!['image_url'],
+      'comment': [],
     });
 
   }
