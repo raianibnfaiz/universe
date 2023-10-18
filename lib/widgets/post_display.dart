@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:universe/screens/UserProfileScreen.dart';
 import 'package:universe/widgets/load_comment.dart';
 
 class PostDisplay extends StatelessWidget {
@@ -106,19 +107,37 @@ class PostDisplay extends StatelessWidget {
                   children: [
                     // Post content
                     if (loadedImage != null)
-                      CircleAvatar(
-                        radius: 20.0,
-                        backgroundImage: NetworkImage(
-                          loadedImage!,
+                      InkWell(
+                        onTap: () {
+                          // Navigate to the profile page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 20.0,
+                          backgroundImage: NetworkImage(
+                            loadedImage!,
+                          ),
                         ),
                       ),
 
                     // Writer's writings
-                    Text(
-                      loadedUsername!,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+                    InkWell(
+                      onTap: () {
+                        // Navigate to the profile page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                        );
+                      },
+                      child: Text(
+                        loadedUsername!,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
