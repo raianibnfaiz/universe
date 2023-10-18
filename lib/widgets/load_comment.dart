@@ -62,9 +62,17 @@ class _LoadCommentsState extends State<LoadComments> {
             String userImageURL = comments[index]['imageUrl']; // Assuming this is the URL of the user's image
 
             return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(userImageURL),
-                radius: 20.0, // Adjust the size as needed
+              leading: InkWell(
+                onTap: () {
+                  print("Tapped");
+                },
+                child: Hero(
+                  tag: 'imageHero',
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(userImageURL),
+                    radius: 20.0, // Adjust the size as needed
+                  ),
+                ),
               ),
               subtitle: Text(comment),
               title: Text(

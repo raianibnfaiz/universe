@@ -12,12 +12,14 @@ class PostDisplay extends StatelessWidget {
     required this.loadedImage,
     required this.loadedUsername,
     required this.loadedPostId,
+    required this.loadedEmail,
     required this.commentController,
   });
   final String? loadedMessage;
   final String? loadedImage;
   final String? loadedUsername;
   final String? loadedPostId;
+  final String? loadedEmail;
   final TextEditingController commentController;
 
   /* Future<void> submitComment(String postId, String comment) async {
@@ -109,32 +111,48 @@ class PostDisplay extends StatelessWidget {
                     if (loadedImage != null)
                       InkWell(
                         onTap: () {
-                          // Navigate to the profile page
+                          // Navigate to the profile page and pass user information
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => UserProfileScreen(
+                                username: loadedUsername,
+                                imageUrl: loadedImage,
+                                userEmail: loadedEmail,
+                              ),
+                            ),
                           );
                         },
-                        child: CircleAvatar(
-                          radius: 20.0,
-                          backgroundImage: NetworkImage(
-                            loadedImage!,
+                        child: Hero(
+                          tag: 'avatar-${loadedUsername}', // Unique tag for the Hero animation
+                          child: CircleAvatar(
+                            radius: 20.0,
+                            backgroundImage: NetworkImage(
+                              loadedImage!,
+                            ),
                           ),
                         ),
                       ),
 
+
                     // Writer's writings
                     InkWell(
                       onTap: () {
-                        // Navigate to the profile page
+                        // Navigate to the profile page and pass user information
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => UserProfileScreen(
+                              username: loadedUsername,
+                              imageUrl: loadedImage,
+                              userEmail: loadedEmail,
+                            ),
+                          ),
                         );
                       },
                       child: Text(
                         loadedUsername!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),

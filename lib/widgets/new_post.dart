@@ -34,6 +34,7 @@ class _NewPostState extends State<NewPost> {
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData.data()!['username'],
+      'userEmail': userData.data()!['email'],
       'userImage': userData.data()!['image_url'],
       'comment': [],
     });

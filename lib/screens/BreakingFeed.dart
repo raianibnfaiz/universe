@@ -56,6 +56,7 @@ class BreakingFeed extends StatelessWidget {
                           loadedUsername:
                               loadedMessages?[index].data()['username'],
                           loadedPostId: loadedMessages?[index].data()['postId'],
+                          loadedEmail: loadedMessages?[index].data()['userEmail'],
                           commentController: commentController,
                         );
                       },
