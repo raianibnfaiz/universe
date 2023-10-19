@@ -102,6 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'Poppins'
                                     ),
                                   )
                                 : Text(

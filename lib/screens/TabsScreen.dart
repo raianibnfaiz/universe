@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universe/screens/BreakingFeed.dart';
+import 'package:universe/screens/ChatScreen.dart';
 import 'package:universe/screens/ProfileScreen.dart';
 import 'package:universe/widgets/update_profile.dart';
 
@@ -82,6 +83,10 @@ class _TabsScreenState extends State<TabsScreen> {
       activePage =  ProfileScreen();
       activeTitle = "My Profile";
     }
+    if(_selectedPageIndex == 2){
+      activePage = ChatScreen();
+      activeTitle = "Chat";
+    }
     return Scaffold(
       appBar: AppBar(
         title:  Text(activeTitle),
@@ -104,6 +109,10 @@ class _TabsScreenState extends State<TabsScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Chat",
           ),
         ],
       ),

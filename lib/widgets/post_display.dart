@@ -81,13 +81,13 @@ class PostDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueGrey, width: 0.5,style: BorderStyle.solid),
+          border: Border.all(
+              color: Colors.blueGrey, width: 0.5, style: BorderStyle.solid),
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
@@ -124,7 +124,8 @@ class PostDisplay extends StatelessWidget {
                           );
                         },
                         child: Hero(
-                          tag: 'avatar-${loadedUsername}', // Unique tag for the Hero animation
+                          tag:
+                              'avatar-${loadedUsername}', // Unique tag for the Hero animation
                           child: CircleAvatar(
                             radius: 20.0,
                             backgroundImage: NetworkImage(
@@ -133,7 +134,6 @@ class PostDisplay extends StatelessWidget {
                           ),
                         ),
                       ),
-
 
                     // Writer's writings
                     InkWell(
@@ -153,9 +153,9 @@ class PostDisplay extends StatelessWidget {
                       child: Text(
                         loadedUsername!,
                         style: const TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins'),
                       ),
                     ),
                   ],
