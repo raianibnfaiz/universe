@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,10 +20,22 @@ class _NewMessageState extends State<NewMessage> {
 
   void _sendMessage() {
     final enteredMessage = _messageController.text;
-    if (enteredMessage.trim().isEmpty) {
+    if (enteredMessage
+        .trim()
+        .isEmpty) {
       return;
     }
     _messageController.clear();
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    FirebaseFirestore.instance.collection('chat').add({
+      'text': enteredMessage,
+      'createdAt': Timestamp.now(),
+      'userId': user?.uid,
+      'username': user?.displayName,
+      'userImage': user?.photoURL,
+    });
   }
 
   @override
