@@ -1,48 +1,70 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PersonalNewMessage extends StatefulWidget {
-  const PersonalNewMessage(
-      {super.key, required this.visitedUserEmail, required this.onClose});
+  const PersonalNewMessage({
+    super.key,
+    required this.visitedUserEmail,
+    required this.onClose,
+  });
+
   final VoidCallback onClose;
   final String? visitedUserEmail;
 
   @override
-  State<PersonalNewMessage> createState() => _PersonalNewMessageState();
+  _PersonalNewMessageState createState() => _PersonalNewMessageState();
 }
 
 class _PersonalNewMessageState extends State<PersonalNewMessage> {
-  void _sendMessage() async {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late User? _currentUser;
+  late TextEditingController _messageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = _auth.currentUser;
+    _messageController = TextEditingController();
+  }
+
+  Future<void> _sendMessage() async {
     final enteredMessage = _messageController.text;
     if (enteredMessage.trim().isEmpty) {
       return;
     }
-    FocusScope.of(context).unfocus();
+
     _messageController.clear();
 
-    final user = FirebaseAuth.instance.currentUser;
-    final userData = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user?.uid)
-        .get();
-    String directMessageId =
-        FirebaseFirestore.instance.collection('directMessages').doc().id;
+    if (_currentUser == null) {
+      // Handle the case when the user is not logged in
+      return;
+    }
 
-    FirebaseFirestore.instance.collection('directMessages').add({
+    final userData =
+    await _firestore.collection('users').doc(_currentUser!.uid).get();
+
+    if (!userData.exists) {
+      // Handle the case when user data is not available
+      return;
+    }
+
+    String directMessageId = _firestore.collection('directMessages').doc().id;
+
+    await _firestore.collection('directMessages').add({
       'text': enteredMessage,
       'directMessageId': directMessageId,
       'createdAt': Timestamp.now(),
-      'senderuserId': user?.uid,
-      'senderuserEmail': user?.email,
-      'receiveruserEmail': widget.visitedUserEmail,
-      'senderUsername': userData?.data()!['username'],
-      'senderUserImage': userData?.data()!['image_url'],
+      'senderUserId': _currentUser!.uid,
+      'senderUserEmail': _currentUser!.email,
+      'receiverUserEmail': widget.visitedUserEmail,
+      'senderUsername': userData['username'],
+      'senderUserImage': userData['image_url'],
     });
   }
 
-  var _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -50,7 +72,7 @@ class _PersonalNewMessageState extends State<PersonalNewMessage> {
       child: Column(
         children: [
           SizedBox(height: 40),
-          // Adjust the width as needed
+          // AppBar with close button and title
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -66,77 +88,32 @@ class _PersonalNewMessageState extends State<PersonalNewMessage> {
                 ),
               ),
               SizedBox(width: 40),
-              // Adjust the width as needed
             ],
           ),
-      Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, bottom: 14,right: 1),
-              child: TextField(
-                controller: _messageController,
-                textCapitalization: TextCapitalization.sentences,
-                autocorrect: true,
-                enableSuggestions: true,
-                decoration: InputDecoration(labelText: "Send a message..."),
+          // Message input field and send button
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 14, right: 1),
+                  child: TextField(
+                    controller: _messageController,
+                    textCapitalization: TextCapitalization.sentences,
+                    autocorrect: true,
+                    enableSuggestions: true,
+                    decoration: InputDecoration(labelText: "Send a message..."),
+                  ),
+                ),
               ),
-            ),
+              IconButton(
+                onPressed: _sendMessage,
+                icon: Icon(Icons.send),
+                color: Theme.of(context).primaryColor,
+              )
+            ],
           ),
-          IconButton(
-            onPressed: _sendMessage,
-            icon: Icon(Icons.send),
-            color: Theme.of(context).primaryColor,
-          )
-        ],
-      ),
         ],
       ),
     );
   }
-}
-
-Future<void> submitComment(String postId, String comment) async {
-  final _auth = FirebaseAuth.instance;
-  User? user = _auth.currentUser;
-  final docs = FirebaseFirestore.instance
-      .collection('users')
-      .where('email', isEqualTo: user?.email);
-  QuerySnapshot userQuerySnapshot = await docs.get();
-  if (userQuerySnapshot.docs.isNotEmpty) {
-    Map<String, dynamic> userData =
-        userQuerySnapshot.docs[0].data() as Map<String, dynamic>;
-
-    // Accessing properties of the user document
-    String? username = userData['username'];
-    String? email = userData['email'];
-    // Add more properties as needed
-
-    // Print or use the user data
-    print('Username: $username');
-    print('Email: $email');
-    // Print or use other properties as needed
-    DocumentSnapshot userSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(email).get();
-
-    if (userSnapshot.exists) {
-      await FirebaseFirestore.instance.collection('users').doc(postId).update({
-        'chats': FieldValue.arrayUnion([
-          {
-            'imageUrl': userData['image_url'],
-            'userId': user!.uid,
-            'comment': comment,
-            'username': userData['username'],
-            'userEmail': email,
-            'timestamp': Timestamp.now(),
-          }
-        ]),
-      });
-    }
-    // Accessing the first document's data (assuming there's only one document)
-  } else {
-    print('No user found with the specified email.');
-  }
-
-  // Assuming 'comments' is a subcollection under 'posts'
 }
