@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/UserProfileScreen.dart';
+
 List<dynamic> uC = [];
 
 class LoadComments extends StatefulWidget {
@@ -59,12 +61,22 @@ class _LoadCommentsState extends State<LoadComments> {
             // Assuming comments is a list of Map<String, dynamic>
             String comment = comments[index]['comment'];
             String username = comments[index]['username'];
+            String userEmail = comments[index]['userEmail'];
             String userImageURL = comments[index]['imageUrl']; // Assuming this is the URL of the user's image
 
             return ListTile(
               leading: InkWell(
                 onTap: () {
-                  print("Tapped");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserProfileScreen(
+                        username: username,
+                        imageUrl: userImageURL,
+                        userEmail: userEmail,
+                      ),
+                    ),
+                  );
                 },
                 child: Hero(
                   tag: 'imageHero',
@@ -90,69 +102,5 @@ class _LoadCommentsState extends State<LoadComments> {
     );
   }
 
-    /*Expanded(
-      child: FutureBuilder<List<dynamic>>(
-        future: _commentsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              child: Center(child: CircularProgressIndicator()),
-            );
-          } else if (snapshot.hasError) {
-            return Container(
-              child: Center(child: Text("Error: ${snapshot.error}")),
-            );
-          } else {
-            List<Map<String, dynamic>>? comments =
-                snapshot.data?.cast<Map<String, dynamic>>();
-            print(comments);
-            return ListView.builder(
-                itemCount: comments?.length,
-                itemBuilder: (context, index) {
-                  Text("Comment:");
-                });
-            itemBuilder:
-            {}
-            *//*ListView.builder(
-          itemCount: comments?.length ?? 0,
-          itemBuilder: (context, index) {
-            Map<String, dynamic>? commentData = comments?[index];
-            String commentText = commentData?['comment'] ?? '';
-            String commenterUsername = commentData?['username'] ?? '';
-            Timestamp timestamp = commentData?['timestamp'] ?? Timestamp(0, 0);
-
-            // Convert timestamp to DateTime
-            DateTime dateTime = timestamp.toDate();
-
-            return ListTile(
-              title: Text(commentText),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Comment by: $commenterUsername'),
-                  Text('Timestamp: $dateTime'),
-                ],
-              ),
-            );
-          },
-        );*//*
-            *//*ListView.builder(
-          itemCount: comments?.length ?? 0,
-          itemBuilder: (context, index) {
-            Map<String, dynamic>? commentData = comments?[index];
-            print("commentData: $commentData");
-            String commentText = commentData?['comment'] ?? '';
-            String commenterUsername = commentData?['username'] ?? '';
-
-            return ListTile(
-              title: Text(commentText),
-              subtitle: Text('Comment by: $commenterUsername'),
-            );
-          },
-        );*//*
-          }
-        },
-      ),
-    );*/
 
 }

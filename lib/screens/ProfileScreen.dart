@@ -6,6 +6,7 @@ import 'package:universe/models/City.dart';
 import 'package:universe/models/State.dart';
 import 'package:universe/screens/AuthScreen.dart';
 import 'package:universe/services/firebase_services.dart';
+import 'package:universe/widgets/PersonalNewMessage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -36,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

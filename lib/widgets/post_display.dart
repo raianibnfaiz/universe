@@ -66,6 +66,7 @@ class PostDisplay extends StatelessWidget {
               'userId': user!.uid,
               'comment': comment,
               'username': userData['username'],
+              'userEmail': email,
               'timestamp': Timestamp.now(),
             }
           ]),
@@ -125,7 +126,8 @@ class PostDisplay extends StatelessWidget {
                         },
                         child: Hero(
                           tag:
-                              'avatar-${loadedUsername}', // Unique tag for the Hero animation
+                              'avatar-${loadedUsername}',
+                          // Unique tag for the Hero animation
                           child: CircleAvatar(
                             radius: 20.0,
                             backgroundImage: NetworkImage(

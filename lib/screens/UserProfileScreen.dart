@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/PersonalNewMessage.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen(
@@ -17,6 +20,74 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  Future<void> submitComment(String postId, String comment) async {
+    final _auth = FirebaseAuth.instance;
+    User? user = _auth.currentUser;
+    final docs = FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: user?.email);
+    QuerySnapshot userQuerySnapshot = await docs.get();
+    if (userQuerySnapshot.docs.isNotEmpty) {
+      Map<String, dynamic> userData =
+      userQuerySnapshot.docs[0].data() as Map<String, dynamic>;
+
+      // Accessing properties of the user document
+      String? username = userData['username'];
+      String? email = userData['email'];
+      // Add more properties as needed
+
+      // Print or use the user data
+      print('Username: $username');
+      print('Email: $email');
+      // Print or use other properties as needed
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(email)
+          .get();
+
+      if (userSnapshot.exists) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(postId)
+            .update({
+          'chats': FieldValue.arrayUnion([
+            {
+              'imageUrl': userData['image_url'],
+              'userId': user!.uid,
+              'comment': comment,
+              'username': userData['username'],
+              'userEmail': email,
+              'timestamp': Timestamp.now(),
+            }
+          ]),
+        });
+      }
+      // Accessing the first document's data (assuming there's only one document)
+    } else {
+      print('No user found with the specified email.');
+    }
+
+    // Assuming 'comments' is a subcollection under 'posts'
+  }
+  void _openAddExpensesOverlay() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return FractionallySizedBox(
+          heightFactor: 1,
+          child: Container(
+            child: PersonalNewMessage(
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+              visitedUserEmail: widget.userEmail,
+            ),
+          ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     // Build the UI for the profile page
@@ -185,43 +256,47 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       color: Colors.teal,
                                     ),
                                   )
-                                : SizedBox(),
+                                : SizedBox(height: 30),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: ElevatedButton(
+                                onPressed:_openAddExpensesOverlay,
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red, // Background color
+                                  onPrimary: Colors.white, // Text color
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(30.0), // Rounded corners
+                                  ),
+                                  elevation: 3, // Elevation to create a shadow effect
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        30.0), // Rounded corners for ink splash
+                                  ),
+                                  child: Container(
+                                    constraints: const BoxConstraints(
+                                        minWidth: 150.0, minHeight: 50.0),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'Send Message',
+                                      style: TextStyle(fontSize: 18.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       );
                     }),
               ),
 
-              SizedBox(height: 30),
             ],
           ),
         ),
       ),
     );
-    /*Scaffold(
-      appBar: AppBar(
-        title: Text('Profile Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50.0,
-              backgroundImage: NetworkImage(widget.imageUrl ?? ''),
-            ),
-            SizedBox(height: 20.0),
-            Text(
-              'Username: ${widget.username ?? ''}',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            Text(
-              'Username: ${widget.userEmail ?? ''}',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ],
-        ),
-      ),
-    );*/
   }
 }
