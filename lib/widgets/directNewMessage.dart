@@ -1,28 +1,22 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-class PersonalNewMessage extends StatefulWidget {
-  const PersonalNewMessage({
-    Key? key,
-    required this.visitedUserEmail,
-    required this.onClose,
-  }) : super(key: key);
-
-  final VoidCallback onClose;
+class directNewMessage extends StatefulWidget {
+  const directNewMessage({super.key, required this.visitedUserEmail, required this.onClose});
   final String? visitedUserEmail;
-
+  final VoidCallback onClose;
   @override
-  _PersonalNewMessageState createState() => _PersonalNewMessageState();
+  State<directNewMessage> createState() => _directNewMessageState();
 }
 
-class _PersonalNewMessageState extends State<PersonalNewMessage> {
+class _directNewMessageState extends State<directNewMessage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   late User? _currentUser;
   late TextEditingController _messageController;
-
   @override
   void initState() {
     super.initState();
@@ -81,8 +75,6 @@ class _PersonalNewMessageState extends State<PersonalNewMessage> {
       });
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -135,4 +127,3 @@ class _PersonalNewMessageState extends State<PersonalNewMessage> {
     );
   }
 }
-
